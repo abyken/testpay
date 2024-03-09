@@ -16,16 +16,9 @@ let package = Package(
             targets: ["EpaySDK"]
         ),
     ],
-    dependencies: [
-        .package(
-            url: "https://github.com/getbouncer/cardscan-ios.git", 
-            from: "2.1.2"
-        )
-    ],
     targets: [
         .target(
             name: "EpaySDK",
-            dependencies: [.product(name: "CardScan", package: "cardscan-ios")],
             resources: [
                 .process("Resources")
             ]

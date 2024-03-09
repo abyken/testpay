@@ -20,7 +20,6 @@ import MobileCoreServices
 import OpenGLES
 import QuartzCore
 import Security
-import CardScan
 
 class MainViewController: UIViewController {
 
@@ -470,58 +469,10 @@ extension MainViewController: PaymentInfoTableViewCellDelegate {
     func didTapApplePayButton() {
         presentApplePayViewController()
     }
-}
 
-extension MainViewController: ScanDelegate {
-    func scanCard() {
-        guard let vc = ScanViewController.createViewController(withDelegate: self) else {
-            print("This device is incompatible with CardScan")
-            return
-        }
-        
-        DispatchQueue.main.async {
-                    if AVCaptureDevice.authorizationStatus(for: .video) ==  .authorized || AVCaptureDevice.authorizationStatus(for: .video) ==  .denied {
-                        self.present(vc, animated: true)
-                    } else {
-                        AVCaptureDevice.requestAccess(for: .video, completionHandler: { (granted: Bool) in
-                            DispatchQueue.main.async { [weak self] in
-                                guard let self = self else { return }
-                                if granted {
-                                    self.present(vc, animated: true)
-                                } else {
-                                    self.present(vc, animated: true)
-                                }
-                            }
-                        })
-                    }
-        }
-        
-        
+    func scanCard(){
+        return
     }
-    
-    func userDidCancel(_ scanViewController: CardScan.ScanViewController) {
-        scanViewController.dismiss(animated: true)
-    }
-    
-    func userDidScanCard(_ scanViewController: CardScan.ScanViewController, creditCard: CardScan.CreditCard) {
-        let cellNotCasted = self.tableView.visibleCells[0]
-        if (cellNotCasted is PaymentInfoTableViewCell) {
-            let cell = cellNotCasted as! PaymentInfoTableViewCell
-            cell.creditCardPaymentView.creditCardView.cardNumber = creditCard.number
-            cell.creditCardPaymentView.creditCardView.nameTextField.text = creditCard.name ?? ""
-            if creditCard.expiryMonth != nil && creditCard.expiryYear != nil {
-                cell.creditCardPaymentView.creditCardView.monthTextField.text = creditCard.expiryMonth ?? ""
-                cell.creditCardPaymentView.creditCardView.yearTextField.text = creditCard.expiryYear ?? ""
-            }
-        }
-        scanViewController.dismiss(animated: true)
-    }
-    
-    func userDidSkip(_ scanViewController: CardScan.ScanViewController) {
-        scanViewController.dismiss(animated: true)
-    }
-    
-    
 }
 
 extension MainViewController: PaymentTypesViewDelegate {
